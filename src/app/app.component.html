@@ -1,41 +1,47 @@
 <mat-toolbar color="primary">
-  <button mat-icon-button (click)="sidenav.toggle()">
+  <button mat-icon-button (click)="toggleSidenav()">
     <mat-icon>menu</mat-icon>
   </button>
   <span>My App</span>
+  <span class="spacer"></span>
+  <button mat-button *ngIf="authService.isAuthenticated()" (click)="logout()">Logout</button>
+  <a mat-button *ngIf="!authService.isAuthenticated()" routerLink="/login">Login</a>
 </mat-toolbar>
 
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav #sidenav mode="side" opened>
-    <mat-nav-list>
+  <mat-sidenav #sidenav
+               [mode]="'side'"
+               [opened]="true"
+               [class.collapsed]="isCollapsed"
+               (mouseenter)="isHovered = true"
+               (mouseleave)="isHovered = false">
 
-      <!-- Loop through menu items -->
+    <mat-nav-list>
       <ng-container *ngFor="let item of menuItems">
 
-        <!-- If item has children (Expansion Panel) -->
-        <mat-expansion-panel *ngIf="item.children && canAccess(item)">
+        <mat-expansion-panel *ngIf="item.children" [ngClass]="{'expanded': !isCollapsed || isHovered}">
           <mat-expansion-panel-header>
             <mat-icon>{{ item.icon }}</mat-icon>
-            <span>{{ item.label }}</span>
+            <span *ngIf="!isCollapsed || isHovered">{{ item.label }}</span>
           </mat-expansion-panel-header>
-          <mat-nav-list>
-            <a mat-list-item *ngFor="let child of item.children"
-               routerLink="child.link">
+          <mat-nav-list *ngIf="!isCollapsed || isHovered">
+            <a mat-list-item *ngFor="let child of item.children" routerLink="child.link">
               {{ child.label }}
             </a>
           </mat-nav-list>
         </mat-expansion-panel>
 
-        <!-- If item does not have children (Regular Menu Item) -->
-        <a mat-list-item *ngIf="!item.children && canAccess(item)"
-           routerLink="item.link">
+        <a mat-list-item *ngIf="!item.children"
+           [outerLink="item.link"
+           matTooltip="{{ item.label }}"
+           matTooltipPosition="right">
           <mat-icon>{{ item.icon }}</mat-icon>
-          {{ item.label }}
+          <span *ngIf="!isCollapsed || isHovered">{{ item.label }}</span>
         </a>
 
       </ng-container>
-
     </mat-nav-list>
+
   </mat-sidenav>
 
   <mat-sidenav-content>

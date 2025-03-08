@@ -11,17 +11,74 @@ mat-toolbar {
 
 mat-sidenav {
   width: 250px;
+  transition: width 0.3s ease-in-out;
+  overflow: hidden;
 }
 
-.content {
-  padding: 20px;
+mat-sidenav.collapsed {
+  width: 70px;
 }
 
-/* Expansion Panel Animation */
+mat-nav-list a {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.3s ease-in-out;
+}
+
+mat-nav-list a mat-icon {
+  margin-right: 10px;
+}
+
+mat-sidenav.collapsed mat-nav-list a {
+  justify-content: center;
+}
+
+mat-sidenav.collapsed mat-nav-list a span {
+  display: none;
+}
+
 mat-expansion-panel {
-  transition: all 0.3s ease-in-out;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
 }
 
-mat-expansion-panel-header:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+mat-expansion-panel-header {
+  padding: 0;
+}
+
+mat-expansion-panel.expanded {
+  width: 100%;
+}
+
+mat-expansion-panel.expanded mat-expansion-panel-header span {
+  display: inline-block;
+}
+
+mat-expansion-panel.expanded mat-nav-list {
+  display: block;
+}
+
+mat-sidenav.collapsed mat-expansion-panel.expanded mat-expansion-panel-header span {
+  display: none;
+}
+
+mat-sidenav.collapsed mat-expansion-panel.expanded mat-nav-list {
+  display: none;
+}
+
+/* Hover Effect */
+mat-sidenav.collapsed:hover {
+  width: 250px;
+}
+
+mat-sidenav.collapsed:hover mat-nav-list a span {
+  display: inline-block;
+}
+
+mat-sidenav.collapsed:hover mat-expansion-panel.expanded mat-nav-list {
+  display: block;
 }

@@ -1,0 +1,21 @@
+[
+  { "label": "Dashboard", "icon": "dashboard", "link": "/dashboard" },
+  {
+    "label": "Settings",
+    "icon": "settings",
+    "role": "admin",
+    "children": [
+      { "label": "Profile", "link": "/profile" },
+      { "label": "Account", "link": "/account" }
+    ]
+  },
+  {
+    "label": "Projects",
+    "icon": "folder",
+    "children": [
+      { "label": "Project 1", "link": "/project1" },
+      { "label": "Project 2", "link": "/project2" }
+    ]
+  },
+  { "label": "Help", "icon": "help", "link": "/help" }
+]

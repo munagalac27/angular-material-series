@@ -1,12 +1,14 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
+import { AuthService } from './services/auth.service';
+import { MenuService } from './services/menu.service';
 
 interface MenuItem {
   label: string;
   icon: string;
   link?: string;
-  role?: string; // Role-based access control
-  children?: MenuItem[]; // Nested menu items
+  role?: string;
+  children?: MenuItem[];
 }
 
 @Component({
@@ -14,46 +16,38 @@ interface MenuItem {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
-  // Simulated user role (Can be fetched from an API)
-  userRole = 'admin'; // Change to 'user' to test role-based access
+  isCollapsed = false;
+  isHovered = false;
+  userRole: string = 'guest';
+  menuItems: MenuItem[] = [];
 
-  // Dynamic menu structure
-  menuItems: MenuItem[] = [
-    { label: 'Dashboard', icon: 'dashboard', link: '/dashboard' },
-    {
-      label: 'Settings', icon: 'settings', role: 'admin',
-      children: [
-        {
-          label: 'Profile', link: '/profile',
-          icon: ''
-        },
-        {
-          label: 'Account', link: '/account',
-          icon: ''
-        }
-      ]
-    },
-    {
-      label: 'Projects', icon: 'folder',
-      children: [
-        {
-          label: 'Project 1', link: '/project1',
-          icon: ''
-        },
-        {
-          label: 'Project 2', link: '/project2',
-          icon: ''
-        }
-      ]
-    },
-    { label: 'Help', icon: 'help', link: '/help' }
-  ];
+  constructor(public authService: AuthService, private menuService: MenuService) {}
 
-  // Function to check user role for access
+  ngOnInit() {
+    this.authService.user$.subscribe(user => {
+      this.userRole = user ? user.role : 'guest';
+      this.loadMenu();
+    });
+  }
+
+  loadMenu() {
+    this.menuService.getMenu().subscribe(data => {
+      this.menuItems = data.filter(item => this.canAccess(item));
+    });
+  }
+
   canAccess(menuItem: MenuItem): boolean {
     return !menuItem.role || menuItem.role === this.userRole;
+  }
+
+  toggleSidenav() {
+    this.isCollapsed = !this.isCollapsed;
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }
